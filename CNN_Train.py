@@ -13,7 +13,7 @@ import numpy as np
 
 def train(values, suffix):
 
-    #Declare hyperparameters
+    #Declare parameters
     seed = random.randint(0, 200)
     dataset = values["-DATADROP-"]
     batchsize = values["-BATCHDROP-"]
@@ -59,18 +59,9 @@ def train(values, suffix):
     plt.figure(figsize=(10, 10))
 
 
-    # for images, labels in valDs.take(1):
-    #     for i in range(9):
-    #         ax = plt.subplot(3, 3, i + 1)
-    #         plt.imshow(images[i].numpy().astype("uint8"))
-    #         plt.title(classNames[labels[i]])
-    #         plt.axis("off")
-    #
-    # plt.show()
-
     AUTOTUNE = tf.data.AUTOTUNE
 
-    #Randomise the order of the datasets I think
+    #Randomise the order of the datasets
     trainDs = trainDs.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
     valDs = valDs.cache().prefetch(buffer_size=AUTOTUNE)
 
@@ -99,6 +90,7 @@ def train(values, suffix):
         layers.Conv2D(32, 3, padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
+        #Optionally remove this layer for a more shallow network with lower chance of overfitting
         layers.Conv2D(64, 3, padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
