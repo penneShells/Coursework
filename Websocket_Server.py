@@ -16,6 +16,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         print("Client Connected")
         WebSocketServer.clients.add(self)
 
+
     def onClose(self):
         WebSocketServer.clients.remove(self)
 
@@ -33,6 +34,7 @@ class CameraData:
         self.picam2.preview_configuration.main.format = "RGB888"
         self.picam2.preview_configuration.align()
         self.picam2.start()
+
 
     # Grab an image from the pi camera, make it greyscale and convert it to a base64 string
     # Then send it over the websocket to the client
@@ -59,6 +61,7 @@ def main():
     print("start")
 
     # Create a websocket server which constantly sends camera data to the client
+    # It sends data every 100ms currently I believe
     periodicCallback = tornado.ioloop.PeriodicCallback(
         lambda: WebSocketServer.sendMessage(cameraData.dataLoop()), 100
     )
