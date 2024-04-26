@@ -2,7 +2,8 @@ import  PySimpleGUI as sg
 import os
 import DataCollect_CV2
 import CNN_Train
-import modelTesting
+import Model_Testing
+import CNN_Tuner
 
 
 #The generate data button will take each video in the videos folder and extract a face from each frame of video, saving
@@ -20,13 +21,14 @@ class GUI:
         self.dataGenerate = DataCollect_CV2.collectAll
         self.train = CNN_Train.train
         self.running = True
-        self.test = modelTesting.testAll
+        self.test = Model_Testing.testAll
+        self.tune = CNN_Tuner.tune
 
         #Declare arrays for possible hyper parameter options for dropdowns
         datasets = [name.upper() for name in os.listdir("datasets") if os.path.isdir(os.path.join("datasets", name))]
         batchSizes = [16, 32, 48, 64, 128, 192, 256]
         imageSizes = [16, 32, 64, 128, 256, 384, 512]
-        epochnum = [1, 5, 10, 15, 20, 25, 50]
+        epochnum = [1, 3, 5, 10, 15, 20, 25, 50]
         dropouts = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 
         #To be appended to a filename to create a new keras file without overwrite complications
@@ -48,7 +50,8 @@ class GUI:
         #hmm
 
         self.column_2 = [
-            [sg.Button("Begin Training", size=(30, 10))],
+            [sg.Button("Begin Training", size=(30, 5))],
+            [sg.Button("Tune hyperparameters", size=(30, 5))]
         ]
 
         self.layout = [
@@ -61,7 +64,7 @@ class GUI:
             ]
         ]
 
-        self.window = sg.Window("OpenCV Integration", self.layout)
+        self.window = sg.Window("Convolutional neural network creation station", self.layout)
 
     #Closes the window and begins the model training process
     def trainThenQuit(self, values, suffix):
@@ -70,6 +73,11 @@ class GUI:
         model = self.train(values, suffix)
         self.test(model, values[2])
 
+    def tuneThenQuit(self, values, suffix):
+        self.running = False
+        gui.window.close()
+        self.tune(values, suffix)
+
 
     #Executes functions based on button events
     #Prevents the need for many if statements, because I would never use those.
@@ -77,6 +85,7 @@ class GUI:
         possibleEvents = {
             "Generate Training Data": (self.dataGenerate, None, None),
             "Begin Training": (self.trainThenQuit, values, self.suffix),
+            "Tune hyperparameters": (self.tuneThenQuit, values, self.suffix)
         }
 
         eventResponse = possibleEvents.get(event)
