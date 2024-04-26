@@ -48,7 +48,6 @@ def train(values, suffix):
     )
 
 
-
     #selects a portion of the faces for validation data
     valDs = tf.keras.utils.image_dataset_from_directory(
         dataDir,
@@ -58,8 +57,6 @@ def train(values, suffix):
         image_size=(imagesize, imagesize),
         batch_size=int(batchsize)
     )
-
-
 
 
     #displays names of people's faces being trained on
@@ -101,6 +98,7 @@ def train(values, suffix):
       ]
     )
 
+
     def buildModel(hp):
         #model structure
         model = Sequential([
@@ -124,10 +122,6 @@ def train(values, suffix):
                 activation='relu'
             ),
             layers.MaxPooling2D(),
-
-            # layers.Conv2D(64, 3, padding='same', activation='relu'),
-            # layers.MaxPooling2D(),
-
 
             layers.Dropout(dropout),
 
